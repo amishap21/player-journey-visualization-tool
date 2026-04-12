@@ -34,7 +34,9 @@ def get_minimap_image(map_id: str) -> Image.Image:
     else:
         raise ValueError(f"Unknown map_id: {map_id}")
     
-    image_path = f"player_data/minimaps/{filename}"
+    # Use absolute path
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    image_path = os.path.join(script_dir, "player_data", "minimaps", filename)
     if not os.path.exists(image_path):
         # Create a blank image if minimap not found
         blank_image = Image.new('RGB', (1024, 1024), color='gray')
