@@ -17,9 +17,14 @@ def extract_local_data(zip_path: str = "player_data.zip", extract_to: str = "pla
         True if successful, False otherwise
     """
     try:
+        # Use absolute paths
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        abs_zip_path = os.path.join(script_dir, zip_path)
+        abs_extract_to = os.path.join(script_dir, extract_to)
+        
         with st.spinner("Extracting data from local zip file..."):
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(extract_to)
+            with zipfile.ZipFile(abs_zip_path, 'r') as zip_ref:
+                zip_ref.extractall(abs_extract_to)
         return True
     except Exception as e:
         st.error(f"Failed to extract data: {e}")
@@ -29,18 +34,26 @@ def ensure_data_available():
     """
     Ensure player_data is available locally, extract from local zip file if needed.
     """
+    # Use absolute paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    player_data_path = os.path.join(script_dir, "player_data")
+    zip_path = os.path.join(script_dir, "player_data.zip")
+    
     # Check if player_data exists locally
-    if os.path.exists("player_data"):
+    if os.path.exists(player_data_path):
         return
     
     # Check if local zip file exists
-    zip_path = "player_data.zip"
     if not os.path.exists(zip_path):
         st.error(f"player_data not found locally and {zip_path} not found in repository")
+        st.error(f"Current working directory: {os.getcwd()}")
+        st.error(f"Script directory: {script_dir}")
+        st.error(f"Files in script directory: {os.listdir(script_dir)}")
         st.stop()
     
-    # Extract data from local zip file
-    success = extract_local_data(zip_path)
+    # Extract data from local zip file to script_dir (not player_data subdirectory)
+    # This avoids nested player_data/player_data structure
+    success = extract_local_data(zip_path, script_dir)
     if not success:
         st.error(f"Failed to extract player_data from {zip_path}")
         st.stop()
@@ -55,6 +68,11 @@ def load_day_data(folder_path: str) -> Optional[pd.DataFrame]:
     Returns:
         Combined DataFrame with all events from that day, or None if no data
     """
+    # Convert to absolute path if relative
+    if not os.path.isabs(folder_path):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        folder_path = os.path.join(script_dir, folder_path)
+    
     if not os.path.exists(folder_path):
         return None
     
@@ -97,6 +115,11 @@ def get_available_dates(base_path: str) -> list:
     Returns:
         List of date folder names sorted chronologically
     """
+    # Convert to absolute path if relative
+    if not os.path.isabs(base_path):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        base_path = os.path.join(script_dir, base_path)
+    
     if not os.path.exists(base_path):
         return []
     
