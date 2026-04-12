@@ -3,14 +3,14 @@ import pandas as pd
 from data_loader import load_day_data, get_available_dates, ensure_data_available
 from visualizations import render_minimap_with_paths, render_heatmap
 
-ensure_data_available()
-
 # Page config
 st.set_page_config(
     page_title="LILA BLACK - Event Visualizer",
     page_icon="🎮",
     layout="wide"
 )
+
+ensure_data_available()
 
 # Custom CSS for tabs
 st.markdown("""
