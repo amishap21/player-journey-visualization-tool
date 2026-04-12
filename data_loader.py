@@ -1,7 +1,49 @@
 import pandas as pd
 import pyarrow.parquet as pq
 import os
+import zipfile
 from typing import Optional
+import streamlit as st
+
+def extract_local_data(zip_path: str = "player_data.zip", extract_to: str = "player_data") -> bool:
+    """
+    Extract data from local ZIP file.
+    
+    Args:
+        zip_path: Path to local ZIP file containing player_data
+        extract_to: Local directory to extract to
+    
+    Returns:
+        True if successful, False otherwise
+    """
+    try:
+        with st.spinner("Extracting data from local zip file..."):
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_to)
+        return True
+    except Exception as e:
+        st.error(f"Failed to extract data: {e}")
+        return False
+
+def ensure_data_available():
+    """
+    Ensure player_data is available locally, extract from local zip file if needed.
+    """
+    # Check if player_data exists locally
+    if os.path.exists("player_data"):
+        return
+    
+    # Check if local zip file exists
+    zip_path = "player_data.zip"
+    if not os.path.exists(zip_path):
+        st.error(f"player_data not found locally and {zip_path} not found in repository")
+        st.stop()
+    
+    # Extract data from local zip file
+    success = extract_local_data(zip_path)
+    if not success:
+        st.error(f"Failed to extract player_data from {zip_path}")
+        st.stop()
 
 def load_day_data(folder_path: str) -> Optional[pd.DataFrame]:
     """
