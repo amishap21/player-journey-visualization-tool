@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
-from data_loader import load_day_data, get_available_dates, get_matches_for_date_map
-from coordinate_mapper import world_to_pixel
+from data_loader import load_day_data, get_available_dates, ensure_data_available
 from visualizations import render_minimap_with_paths, render_heatmap
-import os
+
+ensure_data_available()
 
 # Page config
 st.set_page_config(
