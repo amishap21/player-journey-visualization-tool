@@ -5,4 +5,3 @@ pillow==10.2.0
 matplotlib==3.8.2
 seaborn==0.13.2
 numpy==1.24.4
-plotly==5.18.0
